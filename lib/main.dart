@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:work_corner/SmallButton.dart';
 
 import 'ColorPalet.dart';
 
@@ -44,23 +46,271 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          width: 700,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomLeft,
-            colors: [
-              ColorPalet().color4,
-              ColorPalet().color4,
-              ColorPalet().color1,
-              ColorPalet().color1,
-              ColorPalet().color2,
-              ColorPalet().color2,
-            ],
+      appBar: AppBar(
+          elevation: 0.0,
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.notifications_outlined,
+                  color: ColorPalet().color1,
+                )),
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.settings_outlined,
+                  color: ColorPalet().color1,
+                ))
+          ],
+          backgroundColor: Colors.white,
+          title: Text(
+            "Work Corner",
+            style: TextStyle(
+              color: ColorPalet().color1,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+              fontSize: 25.0,
+            ),
           )),
-          child: Column(),
+      body: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomLeft,
+              colors: [
+                Colors.white,
+                Color.fromARGB(106, 229, 240, 249),
+                Color.fromARGB(95, 232, 231, 248),
+                Color.fromARGB(121, 232, 245, 255),
+                Colors.white,
+              ],
+            ),
+          ),
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(padding: EdgeInsets.all(10), children: [
+            Container(
+                //first container Ross
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 195, 194, 194)
+                          .withOpacity(0.2), // Shadow color
+                      spreadRadius: 2,
+                      blurRadius: 3,
+                      offset: Offset(0, 3), // Shadow position
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Container(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(0),
+                        title: Text(
+                          "Ross Geller",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        subtitle: Text(
+                          " Human Resources department",
+                          style: TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                20.0), // Set the border radius here
+                            child: Image(
+                              image: AssetImage(
+                                "./images/men.jpg",
+                              ),
+                            )),
+                      ),
+                    ),
+                    Row(
+
+                      
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {},
+                              child: Text("Clock In "),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorPalet().color3)),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {},
+                              child: Text(
+                                "clock out ",
+                                style: TextStyle(color: ColorPalet().color3),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromRGBO(247, 248, 255, 0.945))),
+                        ),
+                      ],
+                    ),
+                  ],
+                )),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: [
+                  SmallButton(
+                      icon: Icons.access_time_filled, title: "Attedance"),
+                  SmallButton(icon: Icons.groups_2, title: "team"),
+                  SmallButton(
+                      icon: Icons.more_time_rounded, title: "Attedance"),
+                  SmallButton(
+                      icon: Icons.access_time_filled, title: "Attedance"),
+                ]),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 30, top: 30),
+              child: Text("Trends",
+                  style: TextStyle(
+                    color: ColorPalet().color2,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15.0,
+                  )),
+            ),
+            Container(
+              
+              margin: EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              height: 500,
+              child: ListView(
+                shrinkWrap: false,
+               children: [
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                )),
+                Card(
+                    child: ListTile(
+                  leading: Text("1"),
+                  title: Text("name"),
+                  subtitle: Text("price"),
+                  trailing: Text("qte",
+                      style: TextStyle(
+                          color: ColorPalet().color1,
+                          fontWeight: FontWeight.w800)),
+                ))
+              ]),
+            )
+          ])),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: ColorPalet().color1,
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: GNav(
+                padding: EdgeInsets.all(16),
+                backgroundColor: ColorPalet().color1,
+                color: Colors.white,
+                activeColor: Colors.white,
+                tabBackgroundColor: Color.fromRGBO(100, 100, 102, 0.425),
+                tabBorderRadius: 15,
+                tabs: const [
+                  GButton(
+                    icon: Icons.home,
+                    text: "Home",
+                  ),
+                  GButton(
+                    icon: Icons.search,
+                    text: "Search",
+                  ),
+                  GButton(
+                    icon: Icons.work_outline_rounded,
+                    text: "DB",
+                  ),
+                  GButton(
+                    icon: Icons.person_2_outlined,
+                    text: "accont",
+                  )
+                ]),
+          ),
         ),
       ),
     );
