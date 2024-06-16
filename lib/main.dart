@@ -1,259 +1,223 @@
-import 'package:firebase_core/firebase_core.dart';
+// main.dart
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:work_corner/SmallButton.dart';
-import 'package:work_corner/taskwidget.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'ColorPalet.dart';
+import 'Home.dart';
+import 'SignUpPage.dart';
+import 'login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  initState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
+      home: FirebaseAuth.instance.currentUser == null ? LandingPage() : Home(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class LandingPage extends StatefulWidget {
+  const LandingPage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LandingPage> createState() => _LandingPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LandingPageState extends State<LandingPage> {
+  Future signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      return;
+    }
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.of(context as BuildContext).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Home()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-          elevation: 0.0,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.notifications_outlined,
-                  color: ColorPalet().color1,
-                )),
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: ColorPalet().color1,
-                ))
-          ],
-          backgroundColor: Colors.white,
-          title: Text(
-            "Work Corner",
-            style: TextStyle(
-              color: ColorPalet().color1,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
-              fontSize: 25.0,
-            ),
-          )),
       body: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomLeft,
-              colors: [
-                Colors.white,
-                Color.fromARGB(106, 229, 240, 249),
-                Color.fromARGB(95, 232, 231, 248),
-                Color.fromARGB(121, 232, 245, 255),
-                Colors.white,
-              ],
-            ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Color.fromRGBO(68, 65, 113, 1),
+              ColorPalet().color2,
+              ColorPalet().color2,
+              ColorPalet().color3,
+              ColorPalet().color3,
+            ],
           ),
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(padding: EdgeInsets.all(10), children: [
-            Center(
-              child: Container(
-                  //first container Ross
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromARGB(255, 195, 194, 194)
-                            .withOpacity(0.2), // Shadow color
-                        spreadRadius: 2,
-                        blurRadius: 3,
-                        offset: Offset(0, 3), // Shadow position
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 50.0, right: 50, bottom: 100),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 700,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Welcome.",
+                      style: TextStyle(
+                        fontSize: 45,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
-                    ],
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                  ),
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Container(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                          title: Text(
-                            "Ross Geller",
-                            style: TextStyle(fontSize: 15),
-                          ),
-                          subtitle: Text(
-                            " Human Resources department",
-                            style: TextStyle(
-                              fontSize: 13,
-                            ),
-                          ),
-                          leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  20.0), // Set the border radius here
-                              child: Image(
-                                image: AssetImage(
-                                  "./images/men.jpg",
-                                ),
-                              )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15),
+                      child: Text(
+                        "Let's Get Started!",
+                        style: TextStyle(
+                          color: Color.fromARGB(183, 255, 255, 255),
+                          fontWeight: FontWeight.w500,
+                          wordSpacing: 2,
+                          letterSpacing: 1.5,
+                          fontSize: 25,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                                onPressed: () {},
-                                child: Text("Clock In "),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ColorPalet().color3)),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 70),
+                    child: SizedBox(
+                      width: 300,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignUpPage()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(15),
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          SizedBox(
-                            width: 10,
+                        ),
+                        child: Text(
+                          "sign up ",
+                          style: TextStyle(
+                            color: ColorPalet().color1,
                           ),
-                          Expanded(
-                            child: ElevatedButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "clock out ",
-                                  style: TextStyle(color: ColorPalet().color3),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Color.fromRGBO(247, 248, 255, 0.945))),
-                          ),
-                        ],
+                        ),
                       ),
-                    ],
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  SmallButton(
-                      icon: Icons.access_time_filled, title: "Attedance"),
-                  SmallButton(icon: Icons.groups_2, title: "team"),
-                  SmallButton(
-                      icon: Icons.more_time_rounded, title: "Attedance"),
-                  SmallButton(
-                      icon: Icons.access_time_filled, title: "Attedance"),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: SizedBox(
+                      width: 300,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          signInWithGoogle();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(15),
+                          backgroundColor:
+                              const Color.fromARGB(131, 255, 255, 255),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          "sign in with google",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 15, bottom: 15),
-              child: Text("Tasks",
-                  style: TextStyle(
-                    color: ColorPalet().color2,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15.0,
-                  )),
-            ),
-            SingleChildScrollView(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  Task(
-                      iconColor: ColorPalet().color5,
-                      taskType: "METTING ",
-                      icon: Icons.timelapse_rounded,
-                      title: "Manager at 4 PM",
-                      buttontitle: "TODAY",
-                      buttonColor: const Color.fromARGB(255, 252, 213, 201)),
-                  Padding(padding: EdgeInsets.all(8)),
-                  Task(
-                      iconColor: ColorPalet().color6,
-                      taskType: "DOCUMENT ",
-                      icon: Icons.timelapse_rounded,
-                      title: "SEND DOCUMENT",
-                      buttontitle: "TOMORROW",
-                      buttonColor: const Color.fromARGB(255, 209, 250, 250)),
-                  Padding(padding: EdgeInsets.all(8)),
-                  Task(
-                      iconColor: ColorPalet().color6,
-                      taskType: "DOCUMENT ",
-                      icon: Icons.timelapse_rounded,
-                      title: "SEND DOCUMENT",
-                      buttontitle: "TOMORROW",
-                      buttonColor: const Color.fromARGB(255, 209, 250, 250))
-                ],
-              ),
-            )
-          ])),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              color: ColorPalet().color1,
-              borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: GNav(
-                padding: EdgeInsets.all(16),
-                backgroundColor: ColorPalet().color1,
-                color: Colors.white,
-                activeColor: Colors.white,
-                tabBackgroundColor: Color.fromRGBO(100, 100, 102, 0.425),
-                tabBorderRadius: 15,
-                tabs: const [
-                  GButton(
-                    icon: Icons.home,
-                    text: "Home",
-                  ),
-                  GButton(
-                    icon: Icons.search,
-                    text: "Search",
-                  ),
-                  GButton(
-                    icon: Icons.mail_outline_rounded,
-                    text: "MESSAGES",
-                  ),
-                  GButton(
-                    icon: Icons.person_2_outlined,
-                    text: "accont",
-                  )
-                ]),
+              Container(
+                padding: EdgeInsets.only(top: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account ? ",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                      child: Text(
+                        'login ',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),
