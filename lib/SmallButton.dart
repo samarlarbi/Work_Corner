@@ -5,7 +5,10 @@ import 'ColorPalet.dart';
 class SmallButton extends StatelessWidget {
   final IconData icon;
   final String title;
-  const SmallButton({super.key, required this.icon, required this.title});
+
+  final onPressed;
+  const SmallButton(
+      {super.key, required this.icon, required this.title, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class SmallButton extends StatelessWidget {
           ],
         ),
         child: ElevatedButton(
-            onPressed: () {},
+            onPressed: onPressed,
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.all(5),
                 backgroundColor: Colors.white,

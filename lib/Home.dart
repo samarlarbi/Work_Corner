@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Account.dart';
 import 'package:work_corner/SmallButton.dart';
+import 'package:work_corner/taskPage.dart';
 import 'package:work_corner/taskwidget.dart';
 
 import 'ColorPalete.dart';
@@ -148,13 +149,46 @@ class _HomeState extends State<Home> {
                     child: Row(
                       children: [
                         SmallButton(
-                            icon: Icons.access_time_filled, title: "Attedance"),
-                        SmallButton(icon: Icons.groups_2, title: "team"),
+                            icon: Icons.access_time_filled,
+                            title: "Attedance",
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TaskPage()),
+                              );
+                            }),
                         SmallButton(
-                            icon: Icons.more_time_rounded, title: "Attedance"),
+                          icon: Icons.groups_2,
+                          title: "team",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Home()),
+                            );
+                          },
+                        ),
                         SmallButton(
-                            icon: Icons.format_list_bulleted_add,
-                            title: "TASKS"),
+                          icon: Icons.more_time_rounded,
+                          title: "Attedance",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Home()),
+                            );
+                          },
+                        ),
+                        SmallButton(
+                          icon: Icons.format_list_bulleted_add,
+                          title: "TASKS",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TaskPage()),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
