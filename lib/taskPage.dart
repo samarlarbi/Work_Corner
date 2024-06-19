@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Home.dart';
+import 'package:work_corner/addtask.dart';
 import 'package:work_corner/taskTile.dart';
 
 import 'Account.dart';
@@ -58,23 +59,35 @@ class _TaskPageState extends State<TaskPage> {
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(10),
-            child: ListView(
-              shrinkWrap: true,
+            child: Column(
               children: [
-                TaskTile(
-                  title: "Project1",
-                  time: "10 : 00 PM",
-                  color: Colors.blue,
-                ),
-                TaskTile(
-                  title: "Project2",
-                  time: "12 : 00 PM",
-                  color: const Color.fromARGB(255, 240, 142, 142),
-                ),
-                TaskTile(
-                  title: "Project1",
-                  time: "10 : 00 PM",
-                  color: Colors.blue,
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context as BuildContext).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => AddTask()),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                    icon: Icon(Icons.add)),
+                ListView(
+                  shrinkWrap: true,
+                  children: [
+                    TaskTile(
+                      title: "Project1",
+                      time: "10 : 00 PM",
+                      color: Colors.blue,
+                    ),
+                    TaskTile(
+                      title: "Project2",
+                      time: "12 : 00 PM",
+                      color: const Color.fromARGB(255, 240, 142, 142),
+                    ),
+                    TaskTile(
+                      title: "Project1",
+                      time: "10 : 00 PM",
+                      color: Colors.blue,
+                    ),
+                  ],
                 ),
               ],
             ),
