@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Home.dart';
@@ -15,6 +16,23 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
+  List Tasks = [];
+  getTasks() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Tasks').get();
+    setState(() {
+      Tasks.addAll(querySnapshot.docs);
+    });
+    print(Tasks);
+  }
+
+  @override
+  void initState() {
+    getTasks();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,25 +87,16 @@ class _TaskPageState extends State<TaskPage> {
                       );
                     },
                     icon: Icon(Icons.add)),
-                ListView(
+                ListView.builder(
+                  itemCount: Tasks.length,
                   shrinkWrap: true,
-                  children: [
-                    TaskTile(
-                      title: "Project1",
-                      time: "10 : 00 PM",
+                  itemBuilder: (context, i) {
+                    return TaskTile(
+                      title: Tasks[i]["title"],
+                      time: Tasks[i]["time"],
                       color: Colors.blue,
-                    ),
-                    TaskTile(
-                      title: "Project2",
-                      time: "12 : 00 PM",
-                      color: const Color.fromARGB(255, 240, 142, 142),
-                    ),
-                    TaskTile(
-                      title: "Project1",
-                      time: "10 : 00 PM",
-                      color: Colors.blue,
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ],
             ),

@@ -13,23 +13,39 @@ class TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(
-            color: Colors.red, // Change to your desired color
-            width: 5.0,
-            // Change to your desired width
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 195, 194, 194)
+                .withOpacity(0.2), // Shadow color
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(0, 3), // Shadow position
+          ),
+        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Colors.red, // Change to your desired color
+              width: 5.0,
+              // Change to your desired width
+            ),
           ),
         ),
-      ),
-      child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 15),
+        child: ListTile(
+          title: Text(
+            title,
+            style: TextStyle(fontSize: 15),
+          ),
+          subtitle: Text(time),
+          trailing: Icon(Icons.mode_edit_outline_outlined),
         ),
-        subtitle: Text(time),
-        trailing: Icon(Icons.mode_edit_outline_outlined),
       ),
     );
   }

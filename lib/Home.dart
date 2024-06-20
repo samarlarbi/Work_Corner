@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,6 +6,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Account.dart';
 import 'package:work_corner/SmallButton.dart';
 import 'package:work_corner/taskPage.dart';
+import 'package:work_corner/taskTile.dart';
 import 'package:work_corner/taskwidget.dart';
 
 import 'ColorPalete.dart';
@@ -23,6 +25,22 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool test = FirebaseAuth.instance.currentUser != null &&
       FirebaseAuth.instance.currentUser!.emailVerified;
+  List Tasks = [];
+  getTasks() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Tasks').get();
+    setState(() {
+      Tasks.addAll(querySnapshot.docs);
+    });
+    print(Tasks);
+  }
+
+  @override
+  void initState() {
+    getTasks();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,37 +257,16 @@ class _HomeState extends State<Home> {
                     child: Container(
                       height: 200,
                       padding: EdgeInsets.all(8),
-                      child: ListView(
-                        children: [
-                          ListTile(
-                            leading: Checkbox(
-                              value: false,
-                              onChanged: (bool? value) {},
-                            ),
-                            title: Text("holla "),
-                          ),
-                          ListTile(
-                            leading: Checkbox(
-                              value: false,
-                              onChanged: (bool? value) {},
-                            ),
-                            title: Text("holla "),
-                          ),
-                          ListTile(
-                            leading: Checkbox(
-                              value: false,
-                              onChanged: (bool? value) {},
-                            ),
-                            title: Text("holla "),
-                          ),
-                          ListTile(
-                            leading: Checkbox(
-                              value: false,
-                              onChanged: (bool? value) {},
-                            ),
-                            title: Text("holla "),
-                          )
-                        ],
+                      child: ListView.builder(
+                        itemCount: Tasks.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) {
+                          return TaskTile(
+                            title: Tasks[i]["title"],
+                            time: Tasks[i]["time"],
+                            color: Colors.blue,
+                          );
+                        },
                       ),
                     ),
                   )
