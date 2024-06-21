@@ -16,6 +16,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+                      bool isLoading = false ;
+
   TextEditingController pass = TextEditingController();
   TextEditingController email = TextEditingController();
   String errorTextemail = "";

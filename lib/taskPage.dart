@@ -16,13 +16,17 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  List Tasks = [];
+  List<QueryDocumentSnapshot> Tasks = [];
+  bool isLoading = true;
+  bool isLoadingdelet = false;
+
   getTasks() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('Tasks').get();
-    setState(() {
-      Tasks.addAll(querySnapshot.docs);
-    });
+
+    Tasks.addAll(querySnapshot.docs);
+    isLoading = false;
+    setState(() {});
     print(Tasks);
   }
 
@@ -77,29 +81,49 @@ class _TaskPageState extends State<TaskPage> {
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.of(context as BuildContext).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => AddTask()),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                    icon: Icon(Icons.add)),
-                ListView.builder(
-                  itemCount: Tasks.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, i) {
-                    return TaskTile(
-                      title: Tasks[i]["title"],
-                      time: Tasks[i]["time"],
-                      color: Colors.blue,
-                    );
-                  },
-                ),
-              ],
-            ),
+            child: isLoading == true
+                ? Text("loading ...")
+                : Column(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context as BuildContext)
+                                .pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => AddTask()),
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                          icon: Icon(Icons.add)),
+                      ListView.builder(
+                        itemCount: Tasks.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) {
+                          return TaskTile(
+                            title: Tasks[i]["title"],
+                            time: Tasks[i]["time"],
+                            color: Colors.blue,
+                            onOkPress: () async {
+                              isLoadingdelet = true;
+                              setState(() {});
+                              await FirebaseFirestore.instance
+                                  .collection('Tasks')
+                                  .doc(Tasks[i].id)
+                                  .delete();
+                              isLoadingdelet = false;
+                              setState(() {});
+                              Navigator.of(context as BuildContext)
+                                  .pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => TaskPage()),
+                                (Route<dynamic> route) => false,
+                              ); // This will only close the dialog
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
           ),
         ),
         bottomNavigationBar: Container(

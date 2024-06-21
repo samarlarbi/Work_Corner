@@ -13,21 +13,59 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  bool isLoading = false;
+  bool done = false;
+
   @override
   Widget build(BuildContext context) {
     TextEditingController title = TextEditingController();
     TextEditingController time = TextEditingController();
-    CollectionReference users = FirebaseFirestore.instance.collection('Tasks');
+    CollectionReference tasks = FirebaseFirestore.instance.collection('Tasks');
 
-    Future<void> addUser() {
+    Future<void> addTask() async {
+      isLoading = true;
+      setState(() {});
       // Call the user's CollectionReference to add a new user
-      return users
-          .add({
-            'title': title.text, // John Doe
-            'time': time.text, // Stokes and Sons
-          })
-          .then((value) => print("Task Added"))
-          .catchError((error) => print("Failed to add Task: $error"));
+      return await tasks.add({
+        'title': title.text, // John Doe
+        'time': time.text, // Stokes and Sons
+      }).then((value) {
+        print(isLoading);
+        isLoading = false;
+        done = true;
+        setState(() {});
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              icon: Icon(
+                Icons.task_alt_outlined,
+                color: Colors.green,
+              ),
+              content: Row(
+                children: [
+                  SizedBox(width: 20),
+                  Text(
+                    "Tasks added successfully ",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(
+                    "OK",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // This will only close the dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }).catchError((error) => print("Failed to add Task: $error"));
     }
 
     return Scaffold(
@@ -95,8 +133,19 @@ class _AddTaskState extends State<AddTask> {
               bgcolor: ColorPalete().color1,
               titlecolor: Colors.white,
               onPressed: () {
-                addUser();
-              })
+                addTask();
+              }),
+          isLoading == true
+              ? AlertDialog(
+                  content: Row(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(width: 20),
+                      Text("Loading ..."),
+                    ],
+                  ),
+                )
+              : Container()
         ]),
       ),
     );

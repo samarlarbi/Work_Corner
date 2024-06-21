@@ -4,16 +4,18 @@ class TaskTile extends StatelessWidget {
   final String title;
   final String time;
   final Color color;
+  final VoidCallback onOkPress;
   const TaskTile(
       {super.key,
       required this.title,
       required this.time,
-      required this.color});
+      required this.color, required this.onOkPress});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(3),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -28,7 +30,6 @@ class TaskTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Container(
-        margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(
@@ -44,7 +45,61 @@ class TaskTile extends StatelessWidget {
             style: TextStyle(fontSize: 15),
           ),
           subtitle: Text(time),
-          trailing: Icon(Icons.mode_edit_outline_outlined),
+          trailing: Wrap(
+            children: [
+              Icon(Icons.mode_edit_outline_outlined),
+              SizedBox(
+                width: 10,
+              ),
+              IconButton(
+                icon: Icon(Icons.delete_outline),
+                onPressed: () {
+                  showDialog(
+                    
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        icon: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                        content: Row(
+                          children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Are you sure to delete this task ? ",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(
+                                  context); // This will only close the dialog
+                            },
+                          ),
+                          TextButton(
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            onPressed:
+                                onOkPress // This will only close the dialog
+                            ,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
