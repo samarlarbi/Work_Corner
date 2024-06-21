@@ -29,8 +29,10 @@ class _HomeState extends State<Home> {
   bool isLoading = true;
   bool isLoadingdelet = false;
   getTasks() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('Tasks').get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('Tasks')
+        .where("user_id", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
 
     Tasks.addAll(querySnapshot.docs);
     isLoading = false;
@@ -291,7 +293,7 @@ class _HomeState extends State<Home> {
                                 },
                                 title: Tasks[i]["title"],
                                 time: Tasks[i]["time"],
-                                color: Colors.blue,
+                                color: Colors.blue, taskid: Tasks[i].id,
                               );
                             },
                           ),

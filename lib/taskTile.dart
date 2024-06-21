@@ -1,15 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:work_corner/Updatetask.dart';
 
 class TaskTile extends StatelessWidget {
   final String title;
+  final String taskid;
   final String time;
   final Color color;
   final VoidCallback onOkPress;
-  const TaskTile(
+  var data = {"name", "title"};
+  getdata() async {
+    var data =
+        await FirebaseFirestore.instance.collection('Tasks').where(taskid);
+    print(data);
+  }
+
+  TaskTile(
       {super.key,
       required this.title,
       required this.time,
-      required this.color, required this.onOkPress});
+      required this.color,
+      required this.onOkPress,
+      required this.taskid});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +60,20 @@ class TaskTile extends StatelessWidget {
           subtitle: Text(time),
           trailing: Wrap(
             children: [
-              Icon(Icons.mode_edit_outline_outlined),
+              IconButton(
+                icon: Icon(Icons.mode_edit_outline_outlined),
+                onPressed: () {
+                  getdata();
+                  Navigator.of(context as BuildContext).push(
+                    MaterialPageRoute(
+                        builder: (context) => UpdateTask(
+                              dtime: "hgch",
+                              dtitle: "data.title",
+                              taskid: taskid,
+                            )),
+                  );
+                },
+              ),
               SizedBox(
                 width: 10,
               ),
@@ -55,7 +81,6 @@ class TaskTile extends StatelessWidget {
                 icon: Icon(Icons.delete_outline),
                 onPressed: () {
                   showDialog(
-                    
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(

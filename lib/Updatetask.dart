@@ -6,71 +6,82 @@ import 'ColorPalete.dart';
 import 'Custominput.dart';
 import 'Home.dart';
 
-class AddTask extends StatefulWidget {
-  const AddTask({super.key});
+class UpdateTask extends StatefulWidget {
+  final String taskid;
+  final String dtitle;
+  final String dtime;
+  const UpdateTask(
+      {super.key,
+      required this.taskid,
+      required this.dtitle,
+      required this.dtime});
 
   @override
-  State<AddTask> createState() => _AddTaskState();
+  State<UpdateTask> createState() => _UpdateTaskState();
 }
 
-class _AddTaskState extends State<AddTask> {
+class _UpdateTaskState extends State<UpdateTask> {
   bool isLoading = false;
   bool done = false;
+  TextEditingController title = TextEditingController();
+  TextEditingController time = TextEditingController();
+  CollectionReference tasks = FirebaseFirestore.instance.collection('Tasks');
+
+  UpdateTask() async {
+    isLoading = true;
+    setState(() {});
+    // Call the user's CollectionReference to add a new user
+    await tasks.doc(widget.taskid).update({
+      "title": title.text,
+      "time": time.text,
+    });
+    print(isLoading);
+    isLoading = false;
+    done = true;
+    setState(() {});
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: Icon(
+            Icons.task_alt_outlined,
+            color: Colors.green,
+          ),
+          content: Row(
+            children: [
+              SizedBox(width: 20),
+              Text(
+                "Tasks added successfully ",
+                style: TextStyle(color: Colors.green),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                "OK",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                Navigator.pop(context); // This will only close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    title.text = widget.dtime;
+    time.text = widget.dtitle;
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController title = TextEditingController();
-    TextEditingController time = TextEditingController();
-    CollectionReference tasks = FirebaseFirestore.instance.collection('Tasks');
-
-    Future<void> addTask() async {
-      isLoading = true;
-      setState(() {});
-      // Call the user's CollectionReference to add a new user
-      return await tasks.add({
-        'title': title.text, // John Doe
-        'time': time.text,
-        'user_id': FirebaseAuth.instance.currentUser?.uid
-         // Stokes and Sons
-      }).then((value) {
-        print(isLoading);
-        isLoading = false;
-        done = true;
-        setState(() {});
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              icon: Icon(
-                Icons.task_alt_outlined,
-                color: Colors.green,
-              ),
-              content: Row(
-                children: [
-                  SizedBox(width: 20),
-                  Text(
-                    "Tasks added successfully ",
-                    style: TextStyle(color: Colors.green),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(
-                    "OK",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context); // This will only close the dialog
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }).catchError((error) => print("Failed to add Task: $error"));
-    }
-
     return Scaffold(
       appBar: AppBar(
           elevation: 0.0,
@@ -102,7 +113,7 @@ class _AddTaskState extends State<AddTask> {
           ),
           backgroundColor: Colors.white,
           title: Text(
-            "Tasks",
+            "Update",
             style: TextStyle(
               color: ColorPalete().color1,
               fontWeight: FontWeight.w900,
@@ -132,11 +143,11 @@ class _AddTaskState extends State<AddTask> {
             },
           ),
           CustomButton(
-              title: "add",
+              title: "Update",
               bgcolor: ColorPalete().color1,
               titlecolor: Colors.white,
               onPressed: () {
-                addTask();
+                UpdateTask();
               }),
           isLoading == true
               ? AlertDialog(

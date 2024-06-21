@@ -8,6 +8,8 @@ import 'Home.dart';
 import 'SignUpPage.dart';
 import 'main.dart';
 
+final _formkey = GlobalKey<FormState>();
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -16,12 +18,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-                      bool isLoading = false ;
+  bool isLoading = false;
 
   TextEditingController pass = TextEditingController();
   TextEditingController email = TextEditingController();
-  String errorTextemail = "";
-  String errorTextpass = "";
+  bool _isVerifying = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,60 +59,198 @@ class _LoginState extends State<Login> {
               ),
             ),
             Container(
-              child: Column(
-                children: [
-                  CInput(
-                    myController: email,
-                    name: "email",
-                    hintText: "email",
-                    obscureText: false,
-                    validator: (email) =>
-                        isValidEmail(email!) ? "email is not valid! " : null,
-                  ),
-                  CInput(
-                    validator: (pass) =>
-                        pass!.length < 8 ? "email is not valid! " : null,
-                    myController: pass,
-                    name: "password",
-                    hintText: "password",
-                    obscureText: true,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          await FirebaseAuth.instance
-                              .sendPasswordResetEmail(email: email.text);
-                        },
-                        child: Text(
-                          "forget the password? ",
-                          style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline),
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  children: [
+                    CInput(
+                      myController: email,
+                      name: "email",
+                      hintText: "email",
+                      obscureText: false,
+                      validator: (email) => isValidEmail(email!) &&
+                              email != null &&
+                              email.length != 0
+                          ? null
+                          : "email is not valid! ",
+                    ),
+                    CInput(
+                      // ignore: unnecessary_null_comparison
+                      validator: (email) => pass.text.length == 0
+                          ? "password is not valid! "
+                          : null,
+                      myController: pass,
+                      name: "password",
+                      hintText: "password",
+                      obscureText: true,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            await FirebaseAuth.instance
+                                .sendPasswordResetEmail(email: email.text);
+                          },
+                          child: Text(
+                            "forget the password? ",
+                            style: TextStyle(
+                                color: Colors.black,
+                                decoration: TextDecoration.underline),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
             CustomButton(
                 onPressed: () async {
-                  try {
-                    final credential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email.text, password: pass.text);
+                  if (_formkey.currentState!.validate()) {
+                    try {
+                      final credential = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: email.text, password: pass.text);
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Home()),
-                    );
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'user-not-found') {
-                      print('No user found for that email.');
-                    } else if (e.code == 'wrong-password') {
-                      print('Wrong password provided for that user.');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home()),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              icon: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                              content: Row(
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    "No user found for that email.",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  } // This will only close the dialog
+                                  ,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else if (e.code == 'wrong-password') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              icon: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                              content: Row(
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    "Wrong password provided for that user.",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  } // This will only close the dialog
+                                  ,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              icon: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                              content: Row(
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    "internet error",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  } // This will only close the dialog
+                                  ,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            icon: Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            ),
+                            content: Row(
+                              children: [
+                                SizedBox(width: 20),
+                                Text(
+                                  "internet error",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                } // This will only close the dialog
+                                ,
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   }
                 },
@@ -155,6 +295,6 @@ class _LoginState extends State<Login> {
 
   bool isValidEmail(String email) {
     final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegExp.hasMatch(email!) || (email == null || email.isEmpty);
+    return emailRegExp.hasMatch(email!) || (email.isEmpty);
   }
 }

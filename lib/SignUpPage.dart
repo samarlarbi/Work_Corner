@@ -40,10 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController pass = TextEditingController();
   TextEditingController cpass = TextEditingController();
   TextEditingController email = TextEditingController();
-  String errorTextname = "";
-  String errorTextemail = "";
-  String errorTextpass = "";
-  String errorTextcpass = "";
+ 
   bool _isVerifying = false;
 
   Widget build(BuildContext context) {

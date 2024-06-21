@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Home.dart';
@@ -22,7 +23,7 @@ class _TaskPageState extends State<TaskPage> {
 
   getTasks() async {
     QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('Tasks').get();
+        await FirebaseFirestore.instance.collection('Tasks').where("user_id",isEqualTo: FirebaseAuth.instance.currentUser?.uid).get();
 
     Tasks.addAll(querySnapshot.docs);
     isLoading = false;
@@ -118,7 +119,7 @@ class _TaskPageState extends State<TaskPage> {
                                     builder: (context) => TaskPage()),
                                 (Route<dynamic> route) => false,
                               ); // This will only close the dialog
-                            },
+                            }, taskid: Tasks[i].id,
                           );
                         },
                       ),
