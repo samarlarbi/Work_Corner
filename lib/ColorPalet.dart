@@ -5,6 +5,7 @@ class ColorPalet {
   Color color2 = Color.fromRGBO(78, 75, 128, 1);
   Color color3 = Color.fromRGBO(144, 158, 243, 1);
   Color color4 = Colors.blueAccent[100]!;
+  Color color8 = const Color.fromARGB(255, 149, 150, 150)!;
 
   Color color7 = Color.fromRGBO(211, 171, 243, 1);
   Color color5 = Color.fromRGBO(255, 145, 144, 1);

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'ColorPalet.dart';
 
-class CInput extends StatelessWidget {
+class CInput extends StatefulWidget {
   final String name;
   final String hintText;
   final IconData? prefixIcon;
@@ -21,25 +21,46 @@ class CInput extends StatelessWidget {
       required this.validator});
 
   @override
+  State<CInput> createState() => _CInputState();
+}
+
+class _CInputState extends State<CInput> {
+  bool show = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: TextStyle(
-                color: ColorPalet().color1,
-                fontSize: 17,
-                fontWeight: FontWeight.w500),
-          ),
-        ],
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(
+        child: Text(
+          widget.name,
+          style: TextStyle(
+              color: ColorPalet().color1,
+              fontSize: 17,
+              fontWeight: FontWeight.w500),
+        ),
       ),
       Container(
-        margin: EdgeInsets.only(bottom: 20, top: 20),
-        height: 30,
         child: TextFormField(
           decoration: InputDecoration(
+              suffixIcon: widget.obscureText
+                  ? IconButton(
+                      icon: show == false
+                          ? Icon(Icons.visibility_off_outlined)
+                          : Icon(Icons.visibility_outlined),
+                      onPressed: () {
+                        if (show == false) {
+                          show = true;
+                        } else {
+                          show = false;
+                        }
+                        setState(() {});
+                      })
+                  : null,
               // Add padding inside
               border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
@@ -48,18 +69,23 @@ class CInput extends StatelessWidget {
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: ColorPalet().color2),
               ),
-              hintText: hintText,
+              hintText: widget.hintText,
               hintStyle: TextStyle(color: Colors.grey),
-              prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+              prefixIcon:
+                  widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
               focusedErrorBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.red, width: 2.0),
               ),
               errorBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.red, width: 2.0),
               )),
-          validator: validator,
-          controller: myController,
-          obscureText: obscureText,
+          validator: widget.validator,
+          controller: widget.myController,
+          obscureText: widget.obscureText
+              ? show
+                  ? false
+                  : true
+              : false,
         ),
       )
     ]);

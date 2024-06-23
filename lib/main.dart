@@ -200,9 +200,9 @@ class _LandingPageState extends State<LandingPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) =>  Login()),
                         );
                       },
                       child: Text(

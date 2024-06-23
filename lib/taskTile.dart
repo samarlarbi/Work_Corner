@@ -9,12 +9,6 @@ class TaskTile extends StatelessWidget {
   final String time;
   final Color color;
   final VoidCallback onOkPress;
-  var data = {"name", "title"};
-  getdata() async {
-    var data =
-        await FirebaseFirestore.instance.collection('Tasks').where(taskid);
-    print(data);
-  }
 
   TaskTile(
       {super.key,
@@ -62,13 +56,16 @@ class TaskTile extends StatelessWidget {
             children: [
               IconButton(
                 icon: Icon(Icons.mode_edit_outline_outlined),
-                onPressed: () {
-                  getdata();
+                onPressed: () async {
+                  DocumentSnapshot data = await FirebaseFirestore.instance
+                      .collection('Tasks')
+                      .doc(taskid)
+                      .get();
                   Navigator.of(context as BuildContext).push(
                     MaterialPageRoute(
                         builder: (context) => UpdateTask(
-                              dtime: "hgch",
-                              dtitle: "data.title",
+                              dtime: data.get("title"),
+                              dtitle: data.get("time"),
                               taskid: taskid,
                             )),
                   );

@@ -31,7 +31,7 @@ class _AddTaskState extends State<AddTask> {
         'title': title.text, // John Doe
         'time': time.text,
         'user_id': FirebaseAuth.instance.currentUser?.uid
-         // Stokes and Sons
+        // Stokes and Sons
       }).then((value) {
         print(isLoading);
         isLoading = false;

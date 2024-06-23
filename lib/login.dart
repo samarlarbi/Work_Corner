@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:work_corner/Alert.dart';
 
 import 'ColorPalet.dart';
 import 'Custominput.dart';
@@ -19,10 +21,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool isLoading = false;
+  bool done = false;
 
   TextEditingController pass = TextEditingController();
   TextEditingController email = TextEditingController();
   bool _isVerifying = false;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    pass.dispose();
+    email.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +46,9 @@ class _LoginState extends State<Login> {
           color: ColorPalet().color1,
           icon: Icon(Icons.arrow_back_rounded),
           onPressed: () {
-            Navigator.push(
-              context,
+            Navigator.of(context as BuildContext).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => LandingPage()),
+              (Route<dynamic> route) => false,
             ); // Navigate back when the back button is pressed
           },
         ),
@@ -122,135 +132,25 @@ class _LoginState extends State<Login> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              icon: Icon(
-                                Icons.error,
-                                color: Colors.red,
-                              ),
-                              content: Row(
-                                children: [
-                                  SizedBox(width: 20),
-                                  Text(
-                                    "No user found for that email.",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text(
-                                    "OK",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  } // This will only close the dialog
-                                  ,
-                                ),
-                              ],
+                            return Alert(
+                              text: "No user found for that email.",
                             );
                           },
                         );
                       } else if (e.code == 'wrong-password') {
+                        print("nnnn");
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              icon: Icon(
-                                Icons.error,
-                                color: Colors.red,
-                              ),
-                              content: Row(
-                                children: [
-                                  SizedBox(width: 20),
-                                  Text(
-                                    "Wrong password provided for that user.",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text(
-                                    "OK",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  } // This will only close the dialog
-                                  ,
-                                ),
-                              ],
+                            return Alert(
+                              text: "Wrong password provided for that user.",
                             );
                           },
                         );
                       } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              icon: Icon(
-                                Icons.error,
-                                color: Colors.red,
-                              ),
-                              content: Row(
-                                children: [
-                                  SizedBox(width: 20),
-                                  Text(
-                                    "internet error",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text(
-                                    "OK",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  } // This will only close the dialog
-                                  ,
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        // Handle other FirebaseAuthException errors
+                        print('Firebase Authentication Error: ${e.code}');
                       }
-                    } catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            icon: Icon(
-                              Icons.error,
-                              color: Colors.red,
-                            ),
-                            content: Row(
-                              children: [
-                                SizedBox(width: 20),
-                                Text(
-                                  "internet error",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text(
-                                  "OK",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                } // This will only close the dialog
-                                ,
-                              ),
-                            ],
-                          );
-                        },
-                      );
                     }
                   }
                 },
@@ -286,7 +186,18 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               ),
-            )
+            ),
+            isLoading == true
+                ? AlertDialog(
+                    content: Row(
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(width: 20),
+                        Text("Loading ..."),
+                      ],
+                    ),
+                  )
+                : Container()
           ],
         ),
       )),

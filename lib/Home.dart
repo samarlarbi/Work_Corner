@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:work_corner/Account.dart';
 import 'package:work_corner/SmallButton.dart';
+import 'package:work_corner/navbar.dart';
 import 'package:work_corner/taskPage.dart';
 import 'package:work_corner/taskTile.dart';
 import 'package:work_corner/taskwidget.dart';
@@ -23,11 +25,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _page = 0;
   bool test = FirebaseAuth.instance.currentUser != null &&
       FirebaseAuth.instance.currentUser!.emailVerified;
   List<QueryDocumentSnapshot> Tasks = [];
   bool isLoading = true;
   bool isLoadingdelet = false;
+
+  void _onNavBarTap(int index) {
+    setState(() {
+      _page = index;
+    });
+  }
+
   getTasks() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('Tasks')
@@ -50,7 +60,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return test
-        ? Scaffold(
+        ?
+                
+        
+         Scaffold(
             appBar: AppBar(
                 elevation: 0.0,
                 actions: [
@@ -172,7 +185,7 @@ class _HomeState extends State<Home> {
                             )),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Row(
                           children: [
                             SmallButton(
@@ -293,57 +306,15 @@ class _HomeState extends State<Home> {
                                 },
                                 title: Tasks[i]["title"],
                                 time: Tasks[i]["time"],
-                                color: Colors.blue, taskid: Tasks[i].id,
+                                color: Colors.blue,
+                                taskid: Tasks[i].id,
                               );
                             },
                           ),
                         ),
                       )
                     ])),
-            bottomNavigationBar: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: ColorPalete().color1,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: GNav(
-                      padding: EdgeInsets.all(16),
-                      backgroundColor: ColorPalete().color1,
-                      color: Colors.white,
-                      activeColor: Colors.white,
-                      tabBackgroundColor: Color.fromRGBO(100, 100, 102, 0.425),
-                      tabBorderRadius: 15,
-                      tabs: [
-                        GButton(
-                          icon: Icons.home,
-                          text: "Home",
-                        ),
-                        GButton(
-                          icon: Icons.search,
-                          text: "Search",
-                        ),
-                        GButton(
-                          icon: Icons.mail_outline_rounded,
-                          text: "MESSAGES",
-                        ),
-                        GButton(
-                          icon: Icons.person_2_outlined,
-                          text: "accont",
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Account()),
-                            ); // Navigate back when the back button is pressed
-                          },
-                        )
-                      ]),
-                ),
-              ),
-            ),
+            bottomNavigationBar: NavBar(onTap: _onNavBarTap),
           )
         : Verification();
   }

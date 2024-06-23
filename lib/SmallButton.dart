@@ -41,14 +41,11 @@ class SmallButton extends StatelessWidget {
                 size: 30,
                 color: ColorPalet().color3,
               ),
-              SizedBox(
-                height: 5,
-              ),
               Text(
                 title,
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 10,
+                    fontSize: 8,
                     fontWeight: FontWeight.w700),
               ),
             ])),
